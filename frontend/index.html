@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockDAG Quantum Nexus Access</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Futuristic Base Styles */
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d1a;
+            color: #e0e0f0;
+
+            /* ENHANCEMENT 1: DIGITAL GRID BACKGROUND */
+            background-image: linear-gradient(0deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        #root { 
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Neon Blue for primary accents */
+        .neon-blue { color: #00e5ff; } /* A bright cyan */
+        .bg-neon-blue { background-color: #00e5ff; }
+        .border-neon-blue { border-color: #00e5ff; }
+        .shadow-neon-glow { box-shadow: 0 0 15px rgba(0, 229, 255, 0.6); } /* Subtle glow */
+        .hover-neon-glow:hover { box-shadow: 0 0 20px rgba(0, 229, 255, 0.8), 0 0 30px rgba(0, 229, 255, 0.5); }
+
+        /* Neon Green for success */
+        .neon-green { color: #39ff14; } /* Bright lime green */
+        .bg-neon-green { background-color: #39ff14; }
+        .border-neon-green { border-color: #39ff14; }
+        .shadow-neon-green-glow { box-shadow: 0 0 15px rgba(57, 255, 20, 0.6); }
+
+        /* Neon Red for danger/revoke */
+        .neon-red { color: #ff073a; } /* Vibrant red */
+        .bg-neon-red { background-color: #ff073a; }
+        .border-neon-red { border-color: #ff073a; }
+        .shadow-neon-red-glow { box-shadow: 0 0 15px rgba(255, 7, 58, 0.6); }
+
+        /* General Card Styling */
+        .futuristic-card {
+            background-color: #1a1a33; /* Darker blue-purple for cards */
+            border: 1px solid rgba(0, 229, 255, 0.2); /* Subtle neon border */
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 229, 255, 0.2); /* Depth + glow */
+            position: relative; /* CRITICAL for header overlay */
+        }
+
+        /* Input styling */
+        .futuristic-input {
+            background-color: #0f0f22;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: #e0e0f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .futuristic-input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+            outline: none;
+        }
+
+        /* Button base styling (unchanged) */
+        .futuristic-button {
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .futuristic-button::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: -1;
+        }
+        .futuristic-button:hover::before {
+            opacity: 1;
+            top: 0;
+            left: 0;
+        }
+
+        /* Specific button colors with glow (unchanged) */
+        .btn-primary { 
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            color: white; 
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4); 
+        }
+        .btn-primary:hover { 
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.8), 0 0 30px rgba(0, 114, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-success { 
+            background: linear-gradient(45deg, #39ff14, #00aa00);
+            color: white; 
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.4); 
+        }
+        .btn-success:hover { 
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.8), 0 0 30px rgba(0, 170, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-warning { 
+            background: linear-gradient(45deg, #ffcc00, #ff9900);
+            color: #333; 
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.4); 
+        }
+        .btn-warning:hover { 
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.8), 0 0 30px rgba(255, 153, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger { 
+            background: linear-gradient(45deg, #ff073a, #cc0000);
+            color: white; 
+            box-shadow: 0 0 10px rgba(255, 7, 58, 0.4); 
+        }
+        .btn-danger:hover { 
+            box-shadow: 0 0 20px rgba(255, 7, 58, 0.8), 0 0 30px rgba(204, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Disabled button state (unchanged) */
+        .futuristic-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .futuristic-button:disabled::before {
+            opacity: 0;
+        }
+
+        /* Monospace font for code/hashes (unchanged) */
+        .font-mono-digital {
+            font-family: 'SF Mono', 'Roboto Mono', 'Ubuntu Mono', monospace;
+        }
+
+        /* Status message styling */
+        .status-bar {
+            background-color: #1a1a33;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 2rem;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+            font-family: 'SF Mono', 'Roboto Mono', monospace;
+            color: #00e5ff;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 150px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00e5ff #1a1a33;
+            
+            /* ENHANCEMENT 3: DIGITAL GLOW EFFECT */
+            text-shadow: 0 0 4px #00e5ff, 0 0 1px #00e5ff;
+        }
+        .status-bar::-webkit-scrollbar { width: 8px; }
+        .status-bar::-webkit-scrollbar-track { background: #1a1a33; border-radius: 10px; }
+        .status-bar::-webkit-scrollbar-thumb { background-color: #00e5ff; border-radius: 10px; border: 2px solid #1a1a33; }
+    </style>
+    <!-- 2. Load React and ReactDOM --><script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- 3. Load Babel for JSX compilation --><script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- 4. CRITICAL: Load Ethers.js v6 via CDN. This provides window.ethers --><script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.1/ethers.umd.min.js"></script>
+</head>
+<body>
+    <div id="root" class="w-full"></div>
+
+    <script type="text/babel">
+        // === CONFIG ===
+        const CONTRACT_ADDRESS = "0x7e27a64b4CA431D7C9aeE8aF98E203163b01380a";
+
+        // ABI generated from your AccessControl.sol (Unchanged)
+        const ABI = [
+          {
+            "inputs": [
+              { "internalType": "bytes32", "name": "fileId", "type": "bytes32" },
+              { "internalType": "string", "name": "cid", "type": "string" },
+              { "internalType": "bytes32", "name": "sha256Val", "type": "bytes32" },
+              { "internalType": "address[]", "name": "initialGrantees", "type": "address[]" }
+            ],
+            "name": "registerFile",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              { "internalType": "bytes32", "name": "fileId", "type": "bytes32" },
+              { "internalType": "address", "name": "grantee", "type": "address" }
+            ],
+            "name": "grantAccess",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              { "internalType": "bytes32", "name": "fileId", "type": "bytes32" },
+              { "internalType": "address", "name": "grantee", "type": "address" }
+            ],
+            "name": "removeAccess",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+            },
+          {
+            "inputs": [{ "internalType": "bytes32", "name": "fileId", "type": "bytes32" }],
+            "name": "revokeFile",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              { "internalType": "bytes32", "name": "fileId", "type": "bytes32" },
+              { "internalType": "address", "name": "user", "type": "address" }
+            ],
+            "name": "isAuthorized",
+            "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [{ "internalType": "bytes32", "name": "fileId", "type": "bytes32" }],
+            "name": "getFile",
+            "outputs": [
+              { "internalType": "address", "name": "owner", "type": "address" },
+              { "internalType": "string", "name": "cid", "type": "string" },
+              { "internalType": "bytes32", "name": "sha256Val", "type": "bytes32" },
+              { "internalType": "bool", "name": "revoked", "type": "bool" }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ];
+
+        // Helper for extracting better error messages from ethers errors
+        const getErrorMessage = (e) => {
+            return e.reason || e.data?.message || e.message || String(e);
+        };
+
+        const { useEffect, useState, useCallback } = React;
+        const Ethers = window.ethers || {};
+
+
+        function App() {
+          const { BrowserProvider, Contract, isHexString, isAddress } = window.ethers || {};
+
+          // Ethers state tracking
+          const [isEthersReady, setIsEthersReady] = useState(false); 
+
+          // provider / signer / contract
+          const [provider, setProvider] = useState(null);
+          const [signer, setSigner] = useState(null);
+          const [contract, setContract] = useState(null);
+
+          // account + status
+          const [account, setAccount] = useState(null);
+          const [status, setStatus] = useState("Initializing systems. Checking for MetaMask...");
+          
+          // Custom Toast/Modal States 
+          const [toastMessage, setToastMessage] = useState({ message: '', type: 'info', id: 0 });
+          const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
+
+          // Custom toast helper
+          const showToast = useCallback((msg, type = 'info') => {
+            setToastMessage({ message: msg, type, id: Date.now() });
+            const timer = setTimeout(() => setToastMessage({ message: '', type: 'info', id: 0 }), 5000);
+            return () => clearTimeout(timer);
+          }, []);
+
+          // form states
+          const [fileId, setFileId] = useState("0x1111111111111111111111111111111111111111111111111111111111111111");
+          const [cid, setCid] = useState("bafybeigdyrzt5sfp7udm7fvfgskhr3g5tq7e7cffdpjpzbh4mvvqaatbtq"); // Example CID
+          const [sha256Val, setSha256Val] = useState("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+          const [initialGrantees, setInitialGrantees] = useState(""); // comma separated addresses
+
+          const [actionAddress, setActionAddress] = useState(""); // used for grant/remove/check
+          const [fileData, setFileData] = useState(null);
+
+          // loading states per action
+          const [loadingGet, setLoadingGet] = useState(false);
+          const [loadingRegister, setLoadingRegister] = useState(false);
+          const [loadingGrant, setLoadingGrant] = useState(false);
+          const [loadingRemove, setLoadingRemove] = useState(false);
+          const [loadingRevoke, setLoadingRevoke] = useState(false);
+          const [loadingCheck, setLoadingCheck] = useState(false);
+
+          // Ethers Readiness and Initial Provider Setup
+          useEffect(() => {
+            if (window.ethers && BrowserProvider && Contract && isHexString && isAddress) {
+              setIsEthersReady(true);
+              setStatus("Ethers.js loaded. Standby for wallet connection.");
+
+              if (window.ethereum) {
+                try {
+                  setProvider(new BrowserProvider(window.ethereum));
+                } catch (e) {
+                  console.error("Failed initial provider setup", e);
+                }
+              }
+            } else {
+                 setStatus("Error: Ethers global variable or components not found. Verify CDN link.");
+            }
+          }, [BrowserProvider, Contract, isHexString, isAddress]);
+
+          // create contract when signer changes 
+          useEffect(() => {
+            if (signer && isEthersReady) {
+              try {
+                setContract(new Contract(CONTRACT_ADDRESS, ABI, signer));
+                setStatus(s => s + "\nContract interface ready.");
+              } catch (e) {
+                console.error("Failed to create contract:", e);
+                setStatus("System Alert: Failed to create contract instance.");
+                showToast("Contract interface init failed!", 'error');
+              }
+            }
+          }, [signer, isEthersReady, Contract]);
+
+          // wallet connect
+          async function connectWallet() {
+            if (!isEthersReady) {
+              setStatus("System Alert: Ethers library not yet ready. Standby.");
+              showToast("Ethers library missing. Cannot establish connection.", 'error');
+              return;
+            }
+            
+            if (!window.ethereum) {
+                setStatus("System Alert: No injected Ethereum provider detected. Install MetaMask or compatible wallet.");
+                showToast("No MetaMask detected. Aborting connection.", 'error');
+                return;
+            }
+
+            let currentProvider = provider;
+            if (!currentProvider) {
+                try {
+                    currentProvider = new BrowserProvider(window.ethereum);
+                    setProvider(currentProvider); 
+                } catch (e) {
+                     console.error("Error initializing provider on click", e);
+                     setStatus("System Alert: Error initializing provider on click.");
+                     showToast("Provider init error.", 'error');
+                     return;
+                }
+            }
+
+            try {
+              setStatus("Initiating secure channel to MetaMask...");
+              await currentProvider.send("eth_requestAccounts", []);
+              const s = await currentProvider.getSigner();
+              const addr = await s.getAddress();
+              setSigner(s);
+              setAccount(addr);
+              setStatus(`Connection established. Identity: ${addr}`);
+              showToast(`Connection successful: ${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`, 'success');
+            } catch (e) {
+              console.error(e);
+              setStatus("Connection terminated: User cancelled or failed.");
+              showToast("Connection failed: " + getErrorMessage(e), 'error');
+            }
+          }
+
+          // Helper: parse comma separated addresses into array
+          function parseAddressList(csv) {
+            if (!csv) return [];
+            return csv.split(",")
+              .map(s => s.trim())
+              .filter(Boolean);
+          }
+
+          // Get file metadata
+          const handleGetFile = useCallback(async () => {
+            if (!contract) { setStatus("System Alert: Contract interface not online."); return; }
+            setLoadingGet(true);
+            setStatus("Querying file metadata from BlockDAG network...");
+
+            try {
+                // Validation check
+                if (!isHexString || !isAddress) throw new Error("Ethers validation utilities not available.");
+                if (!isHexString(fileId, 32)) {
+                    throw new Error("Invalid File ID format. Expected 32-byte hex string.");
+                }
+              
+              const res = await contract.getFile(fileId);
+              // Using named properties from the contract's return for clarity
+              setFileData({
+                owner: res.owner,
+                cid: res.cid,
+                sha256Val: res.sha256Val,
+                revoked: res.revoked
+              });
+              setStatus("Metadata retrieval complete.");
+              showToast("File data retrieved.", 'success');
+            } catch (e) {
+              console.error(e);
+              const msg = getErrorMessage(e);
+              setStatus("Error: getFile operation failed: " + msg);
+              showToast("File data retrieval failed: " + msg, 'error');
+              setFileData(null);
+            } finally {
+              setLoadingGet(false);
+            }
+          }, [contract, fileId, showToast, isHexString, isAddress]);
+
+          // Register file
+          async function handleRegisterFile() {
+            if (!contract) { setStatus("System Alert: Contract interface not online."); return; }
+            setLoadingRegister(true);
+            setStatus("Initiating file registration sequence...");
+            let grantees = [];
+
+            try {
+                if (!isHexString || !isAddress) throw new Error("Ethers validation utilities not available.");
+                // --- Input Validation ---
+                if (!isHexString(fileId, 32)) throw new Error("Invalid File ID format. Expected 32-byte hex string (e.g., 0x...).");
+                if (!isHexString(sha256Val, 32)) throw new Error("Invalid SHA256 hash format. Expected 32-byte hex string (e.g., 0x...).");
+                if (!cid) throw new Error("CID field cannot be empty.");
+
+                grantees = parseAddressList(initialGrantees);
+                grantees.forEach(addr => {
+                    if (!isAddress(addr)) throw new Error(`Invalid address detected in grantees list: ${addr}`);
+                });
+            } catch (e) {
+                setStatus(`Input Error: ${e.message}`);
+                showToast(`Input Error: ${e.message}`, 'error');
+                setLoadingRegister(false);
+                return;
+            }
+
+            setStatus("Broadcasting registerFile transaction...");
+            try {
+              const tx = await contract.registerFile(
+                fileId,
+                cid,
+                sha256Val,
+                grantees
+              );
+
+              setStatus(`Transaction sent: ${tx.hash}`);
+              showToast("Register File Tx sent.", 'info');
+              await tx.wait();
+              setStatus("File registration confirmed on-chain.");
+              showToast("File registered successfully.", 'success');
+              await handleGetFile(); // refresh
+            } catch (e) {
+              console.error(e);
+              const msg = getErrorMessage(e);
+              setStatus("Error: registerFile operation failed: " + msg);
+              showToast("File registration failed: " + msg, 'error');
+            } finally {
+              setLoadingRegister(false);
+            }
+          }
+
+          // Grant access
+          async function handleGrant() {
+            if (!contract) { setStatus("System Alert: Contract interface not online."); return; }
+            if (!actionAddress) { setStatus("Input Error: Target Address required for access grant."); return; }
+
+            try {
+                if (!isAddress(actionAddress)) throw new Error("Invalid address format for target.");
+            } catch (e) {
+                setStatus(`Input Error: ${e.message}`);
+                showToast(`Input Error: ${e.message}`, 'error');
+                return;
+            }
+
+            setLoadingGrant(true);
+            setStatus("Broadcasting grantAccess transaction...");
+            try {
+              const tx = await contract.grantAccess(fileId, actionAddress);
+
+              setStatus(`Transaction sent: ${tx.hash}`);
+              showToast("Grant Access Tx sent.", 'info');
+              await tx.wait();
+              setStatus(`Access protocol updated. Granted to: ${actionAddress}`);
+              showToast(`✅ Access granted to ${actionAddress.substring(0, 6)}...`, 'success');
+            } catch (e) {
+              console.error(e);
+              const msg = getErrorMessage(e);
+              setStatus("Error: grantAccess operation failed: " + msg);
+              showToast("Access grant failed: " + msg, 'error');
+            } finally {
+              setLoadingGrant(false);
+            }
+          }
+
+          // Remove access
+          async function handleRemove() {
+            if (!contract) { setStatus("System Alert: Contract interface not online."); return; }
+            if (!actionAddress) { setStatus("Input Error: Target Address required for access removal."); return; }
+
+            try {
+                if (!isAddress(actionAddress)) throw new Error("Invalid address format for target.");
+            } catch (e) {
+                setStatus(`Input Error: ${e.message}`);
+                showToast(`Input Error: ${e.message}`, 'error');
+                return;
+            }
+
+            setLoadingRemove(true);
+            setStatus("Broadcasting removeAccess transaction...");
+            try {
+              const tx = await contract.removeAccess(fileId, actionAddress);
+
+              setStatus(`Transaction sent: ${tx.hash}`);
+              showToast("Remove Access Tx sent.", 'info');
+              await tx.wait();
+              setStatus(`Access protocol updated. Removed from: ${actionAddress}`);
+              showToast(`✅ Access revoked from ${actionAddress.substring(0, 6)}...`, 'success');
+            } catch (e) {
+              console.error(e);
+              const msg = getErrorMessage(e);
+              setStatus("Error: removeAccess operation failed: " + msg);
+              showToast("Access removal failed: " + msg, 'error');
+            } finally {
+              setLoadingRemove(false);
+            }
+          }
+
+          // Revoke file (final action, executed after confirmation)
+          async function executeRevokeFile() {
+            setShowRevokeConfirm(false); // Close confirmation modal
+            if (!contract) { setStatus("System Alert: Contract interface not online."); return; }
+            setLoadingRevoke(true);
+            setStatus("Initiating permanent file revocation sequence...");
+            try {
+              const tx = await contract.revokeFile(fileId);
+
+              setStatus(`Transaction sent: ${tx.hash}`);
+              showToast("Revoke File Tx sent.", 'info');
+              await tx.wait();
+              setStatus("File revocation confirmed. Access terminated permanently.");
+              showToast("✅ File revoked permanently.", 'success');
+              await handleGetFile();
+            } catch (e) {
+              console.error(e);
+              const msg = getErrorMessage(e);
+              setStatus("Error: revokeFile operation failed: " + msg);
+              showToast("File revocation failed: " + msg, 'error');
+            } finally {
+              setLoadingRevoke(false);
+            }
+          }
+
+          // Check authorization
+          async function handleCheck() {
+            if (!contract) { setStatus("System Alert: Contract interface not online."); return; }
+            if (!actionAddress) { setStatus("Input Error: Target Address required for authorization check."); return; }
+
+            try {
+                if (!isAddress(actionAddress)) throw new Error("Invalid address format for target.");
+            } catch (e) {
+                setStatus(`Input Error: ${e.message}`);
+                showToast(`Input Error: ${e.message}`, 'error');
+                return;
+            }
+
+            setLoadingCheck(true);
+            setStatus("Executing authorization query...");
+            try {
+              const ok = await contract.isAuthorized(fileId, actionAddress);
+              if (ok) {
+                showToast(`✅ Authorization Granted for: ${actionAddress.substring(0, 6)}...`, 'success');
+                setStatus("Query Result: Access Granted.");
+              } else {
+                showToast(`❌ Authorization Denied for: ${actionAddress.substring(0, 6)}...`, 'warning');
+                setStatus("Query Result: Access Denied.");
+              }
+            } catch (e) {
+              console.error(e);
+              const msg = getErrorMessage(e);
+              setStatus("Error: isAuthorized query failed: " + msg);
+              showToast("Authorization check failed: " + msg, 'error');
+            } finally {
+              setLoadingCheck(false);
+            }
+          }
+
+          // --- UI STYLES & COMPONENTS ---
+
+          const toastStyle = {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            color: 'white',
+            zIndex: 1000,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transition: 'opacity 0.3s ease-in-out',
+            opacity: toastMessage.message ? 1 : 0,
+            pointerEvents: 'none',
+          };
+
+          const getToastColor = (type) => {
+            switch (type) {
+              case 'success': return '#39ff14'; // Neon Green
+              case 'error': return '#ff073a';   // Neon Red
+              case 'warning': return '#ffcc00'; // Neon Yellow
+              default: return '#00e5ff';        // Neon Blue (info)
+            }
+          };
+
+          const modalStyle = {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)', // Darker overlay for modals
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 500,
+          };
+
+          const modalContentStyle = {
+            backgroundColor: '#1a1a33', /* Card background */
+            padding: '30px',
+            borderRadius: '1rem',
+            boxShadow: '0 0 25px rgba(0, 229, 255, 0.4)', /* Stronger neon glow */
+            maxWidth: '90%',
+            minWidth: '350px',
+            textAlign: 'center',
+            fontFamily: "Inter, Roboto, Arial, sans-serif",
+            border: '1px solid #00e5ff', /* Stronger border */
+            color: '#e0e0f0'
+          };
+          
+          const ConnectButton = (
+            <button
+                onClick={connectWallet}
+                disabled={!isEthersReady || account}
+                className="w-full sm:w-auto px-6 py-3 futuristic-button btn-primary shadow-neon-glow hover-neon-glow disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+                {isEthersReady ? "Connect Neuralink Interface" : "Awaiting Ethers.js Protocol..."}
+            </button>
+          );
+
+          // --- MAIN RENDER ---
+
+          return (
+            <div className="p-4 sm:p-8 mx-auto max-w-5xl">
+              
+              {/* Custom Toast Message UI */}
+              <div style={{ ...toastStyle, backgroundColor: getToastColor(toastMessage.type), boxShadow: `0 0 15px ${getToastColor(toastMessage.type)}` }}>
+                {toastMessage.message}
+              </div>
+
+              {/* Revoke Confirmation Modal UI (Replaces window.confirm) */}
+              {showRevokeConfirm && (
+                <div style={modalStyle}>
+                  <div style={modalContentStyle} className="rounded-2xl">
+                    <h4 className="text-2xl font-bold mb-4 neon-red">Confirm Termination Protocol</h4>
+                    <p className="text-gray-400 mb-2">Are you absolutely certain you wish to initiate irreversible access termination for this data entity?</p>
+                    <p className="font-bold text-red-500 text-sm mb-6">Warning: This action is permanent. All non-owner access will be irrecoverably severed.</p>
+                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                      <button
+                        onClick={executeRevokeFile}
+                        className="px-6 py-3 futuristic-button btn-danger font-semibold shadow-neon-red-glow hover-neon-glow"
+                      >
+                        Execute Termination Protocol
+                      </button>
+                      <button
+                        onClick={() => setShowRevokeConfirm(false)}
+                        className="px-6 py-3 text-gray-300 bg-gray-700 rounded-xl shadow-md hover:bg-gray-600 transition duration-200 font-semibold"
+                      >
+                        Abort
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <header className="mb-8 p-6 futuristic-card text-center overflow-hidden">
+                {/* ENHANCEMENT 2: HOLOGRAPHIC CODE SCRAWL OVERLAY */}
+                <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10 font-mono-digital text-xs sm:text-sm overflow-hidden z-0">
+                    <pre className="text-neon-blue absolute top-[-5%] left-[-20%] transform rotate-[-5deg] leading-none">
+                        {`[INIT] System_V3.14.0\n[BLOCK] 0x6e21...d4a\n[LOGS] Network_Health: Online\n[AUTH] Protocol_Secure: Active\n[TX] 0xfe01...39a\n[PKI] Key_Exchange_Verified`}
+                    </pre>
+                </div>
+
+                <div className="relative z-10">
+                    <h1 className="text-5xl font-extrabold mb-1 neon-blue drop-shadow-lg leading-tight">BlockDAG Quantum Nexus</h1>
+                    <p className="text-base text-gray-400 mb-4">Decentralized Data Access & Control Interface</p>
+                    
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
+                        <div className="text-sm text-gray-400">
+                          Contract Address: <code className="font-mono-digital text-neon-blue break-all">{CONTRACT_ADDRESS}</code>
+                        </div>
+                        {/* Connection Status */}
+                        <div className="min-w-[200px]">
+                            {!account ? (
+                              ConnectButton
+                            ) : (
+                              <div className="p-3 bg-green-900/40 border border-neon-green rounded-xl shadow-neon-green-glow">
+                                <strong className="block neon-green font-bold mb-0.5">Neuralink Online</strong>
+                                <code className="text-xs font-mono-digital text-green-300 block break-all">{account}</code>
+                              </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+              </header>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* COLUMN 1: REGISTER & FETCH */}
+                <div>
+                    <section className="p-6 futuristic-card mb-8">
+                        <h3 className="text-xl font-semibold mb-4 neon-blue border-b border-gray-700 pb-2">1. Register Data Entity (Admin Access)</h3>
+                        <p className="text-sm text-gray-400 mb-4">Input parameters for new data entity registration on the Quantum Nexus.</p>
+                        
+                        <div className="grid grid-cols-1 gap-4">
+                          <input 
+                            placeholder='Entity ID (32-byte Hex Signature, e.g., 0x...)' 
+                            value={fileId} 
+                            onChange={e => setFileId(e.target.value)} 
+                            className="w-full futuristic-input font-mono-digital" 
+                          />
+                          <input 
+                            placeholder='Data Hash (IPFS CID reference)' 
+                            value={cid} 
+                            onChange={e => setCid(e.target.value)} 
+                            className="w-full futuristic-input font-mono-digital" 
+                          />
+                          <input 
+                            placeholder='Checksum (SHA256 of Data Hash, e.g., 0x...)' 
+                            value={sha256Val} 
+                            onChange={e => setSha256Val(e.target.value)} 
+                            className="w-full futuristic-input font-mono-digital" 
+                          />
+                          <input 
+                            placeholder='Initial Authorized Agents (comma-separated addresses)' 
+                            value={initialGrantees} 
+                            onChange={e => setInitialGrantees(e.target.value)} 
+                            className="w-full futuristic-input font-mono-digital" 
+                          />
+                        </div>
+                        <div className="mt-6">
+                          <button
+                            onClick={handleRegisterFile}
+                            disabled={loadingRegister || !contract || !account}
+                            className="w-full px-5 py-3 futuristic-button btn-success disabled:opacity-50"
+                          >
+                            {loadingRegister ? "Processing..." : "Register Entity on Nexus"}
+                          </button>
+                        </div>
+                    </section>
+                </div>
+
+                {/* COLUMN 2: ACCESS MANAGEMENT & STATUS */}
+                <div>
+                    <section className="p-6 futuristic-card mb-8">
+                        <h3 className="text-xl font-semibold mb-4 neon-blue border-b border-gray-700 pb-2">2. Query Data Entity Status</h3>
+                        
+                        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                          <input
+                            placeholder='Target Entity ID'
+                            value={fileId}
+                            onChange={e => setFileId(e.target.value)}
+                            className="flex-1 futuristic-input font-mono-digital"
+                          />
+                          <button
+                            onClick={handleGetFile}
+                            disabled={loadingGet || !contract}
+                            className="px-6 py-3 futuristic-button btn-primary disabled:opacity-50"
+                          >
+                            {loadingGet ? "Querying..." : "Retrieve Status"}
+                          </button>
+                        </div>
+
+                        {fileData ? (
+                          <div className="bg-gray-900/60 p-4 rounded-xl mt-4 border-l-4 border-neon-blue space-y-1 text-sm shadow-inner">
+                            <div className="flex justify-between items-center">
+                                <strong className="text-gray-300">Originator:</strong> 
+                                <code className="text-xs font-mono-digital text-blue-300 break-all">{fileData.owner}</code>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <strong className="text-gray-300">Data Hash (CID):</strong> 
+                                <code className="text-xs font-mono-digital text-green-300 break-all">{fileData.cid}</code>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <strong className="text-gray-300">Integrity Check (SHA256):</strong> 
+                                <code className="text-xs font-mono-digital text-green-300 break-all">{fileData.sha256Val}</code>
+                            </div>
+                            <div className={`font-semibold pt-2 ${fileData.revoked ? "text-neon-red" : "text-neon-green"}`}>
+                              Access State: {fileData.revoked ? "TERMINATED" : "ACTIVE"}
+                            </div>
+                          </div>
+                        ) : <div className="text-gray-500 mt-4 text-sm p-4 bg-gray-900/60 rounded-xl border-l-4 border-gray-700 shadow-inner">No entity data loaded.</div>}
+                    </section>
+
+                    <section className="p-6 futuristic-card mb-8">
+                        <h3 className="text-xl font-semibold mb-4 neon-blue border-b border-gray-700 pb-2">3. Manage Access Protocols</h3>
+                        <p className="text-sm text-gray-400 mb-4">Grant or revoke access permissions for specific agents to the selected data entity.</p>
+                        
+                        <div className="flex gap-3 mb-4">
+                          <input
+                            placeholder='Target Agent Address'
+                            value={actionAddress}
+                            onChange={e => setActionAddress(e.target.value)}
+                            className="flex-1 futuristic-input font-mono-digital"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <button
+                            onClick={handleGrant}
+                            disabled={loadingGrant || !contract || !account}
+                            className="px-4 py-3 futuristic-button btn-primary disabled:opacity-50"
+                          >
+                            {loadingGrant ? "Granting..." : "Authorize Agent"}
+                          </button>
+                          <button
+                            onClick={handleRemove}
+                            disabled={loadingRemove || !contract || !account}
+                            className="px-4 py-3 futuristic-button btn-warning disabled:opacity-50"
+                          >
+                            {loadingRemove ? "Removing..." : "Deauthorize Agent"}
+                          </button>
+                          <button
+                            onClick={handleCheck}
+                            disabled={loadingCheck || !contract}
+                            className="px-4 py-3 futuristic-button btn-primary disabled:opacity-50"
+                          >
+                            {loadingCheck ? "Querying..." : "Verify Access"}
+                          </button>
+                        </div>
+                    </section>
+                </div>
+              </div>
+              
+              {/* REVOKE & STATUS BLOCK (Full Width) */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 w-full max-w-5xl">
+                <section className="p-6 futuristic-card bg-red-900/20 border-neon-red shadow-neon-red-glow lg:col-span-1">
+                    <h3 className="text-xl font-semibold mb-4 neon-red border-b border-red-700 pb-2">4. Initiate Termination Protocol (Permanent)</h3>
+                    <p className="text-sm text-red-400 mb-4">This command irrevocably terminates all non-owner access to the data entity. Proceed with extreme caution.</p>
+                    <div>
+                      <button
+                        onClick={() => setShowRevokeConfirm(true)} // Show confirmation modal
+                        disabled={loadingRevoke || !contract || !account}
+                        className="w-full px-6 py-3 futuristic-button btn-danger disabled:opacity-50 shadow-neon-red-glow hover-neon-glow"
+                      >
+                        {loadingRevoke ? "Executing..." : "Terminate Entity Access"}
+                      </button>
+                    </div>
+                </section>
+
+                <section className="p-6 futuristic-card lg:col-span-2">
+                    <h3 className="text-xl font-semibold mb-2 neon-blue border-b border-gray-700 pb-2">System Log Output</h3>
+                    <div className="status-bar">
+                        {status || "Awaiting commands..."}
+                    </div>
+                </section>
+              </div>
+
+              <footer className="mt-8 text-xs text-gray-600 text-center p-4">
+                <p>&copy; 2077 BlockDAG Quantum Nexus. Developed with Ethers.js and React/Tailwind. Nexus Protocol v3.14.</p>
+                <p className="mt-2">Disclaimer: This interface manages access control only. Actual secure data storage requires encrypted payloads via IPFS or similar distributed storage solutions.</p>
+              </footer>
+            </div>
+          );
+        }
+
+        // Render the App component
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+    </script>
+</body>
+</html>
